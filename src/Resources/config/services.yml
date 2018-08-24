@@ -1,5 +1,7 @@
 services:
-  CodeRhapsodie\EzAuthenticationBundle\Security\EzLoginAuthenticator:
-    class: CodeRhapsodie\EzAuthenticationBundle\Security\EzLoginAuthenticator
+  ezpublish.security.form_login_guard_authenticator:
+    class: CodeRhapsodie\EzAuthenticationBundle\Security\Guard\Authenticator\EzFormLoginAuthenticator
     arguments:
       - "@ezpublish.api.repository"
+      - "/login"
+      - "/"

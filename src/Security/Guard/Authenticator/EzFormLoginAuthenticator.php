@@ -1,29 +1,51 @@
 <?php
 
-namespace CodeRhapsodie\EzAuthenticationBundle\Security;
+namespace CodeRhapsodie\EzAuthenticationBundle\Security\Guard\Authenticator;
 
 use eZ\Publish\API\Repository\Repository;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 
-class EzLoginAuthenticator extends AbstractGuardAuthenticator
+class EzFormLoginAuthenticator extends AbstractFormLoginAuthenticator
 {
     /**
      * @var Repository
      */
     private $repository;
 
-    public function __construct(Repository $repository)
+    /**
+     * @var string
+     */
+    private $loginUrl;
+
+    /**
+     * @var string
+     */
+    private $defaultSuccessRedirectUrl;
+
+    /**
+     * @param Repository $repository
+     * @param string     $loginUrl
+     * @param string     $defaultSuccessRedirectUrl
+     */
+    public function __construct(Repository $repository, $loginUrl, $defaultSuccessRedirectUrl)
     {
         $this->repository = $repository;
+        $this->loginUrl = $loginUrl;
+        $this->defaultSuccessRedirectUrl = $defaultSuccessRedirectUrl;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getCredentials(Request $request)
     {
         if ($request->request->has('_username')) {
@@ -36,6 +58,9 @@ class EzLoginAuthenticator extends AbstractGuardAuthenticator
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         return $userProvider->loadUserByUsername($credentials['username']);
@@ -65,22 +90,21 @@ class EzLoginAuthenticator extends AbstractGuardAuthenticator
         }
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getLoginUrl()
     {
-        return new RedirectResponse('/login');
+        return $this->loginUrl;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultSuccessRedirectUrl()
     {
+        return $this->defaultSuccessRedirectUrl;
     }
 
-    public function supportsRememberMe()
-    {
-        return true;
-    }
 
-    public function start(Request $request, AuthenticationException $authException = null)
-    {
-        return new RedirectResponse('/login');
-    }
 }
