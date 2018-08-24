@@ -1,0 +1,5 @@
+services:
+  CodeRhapsodie\EzAuthenticationBundle\Security\EzLoginAuthenticator:
+    class: CodeRhapsodie\EzAuthenticationBundle\Security\EzLoginAuthenticator
+    arguments:
+      - "@ezpublish.api.repository"
