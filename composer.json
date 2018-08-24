@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "CodeRhapsodie\\EzAuthenticationBundle\\": "vendor/coderhapsodie/ezauthenticationbundle/src/"
+            "CodeRhapsodie\\EzAuthenticationBundle\\": "src/"
         }
     },
     "autoload-dev": {
